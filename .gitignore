@@ -1,0 +1,14 @@
+# Python
+.venv/*
+*.pyc
+
+# Input file types
+*.txt
+*.csv
+
+# Outpu file types
+*.html
+*.db
+
+# General
+*.swp
