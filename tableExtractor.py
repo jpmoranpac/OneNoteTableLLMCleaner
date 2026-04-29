@@ -100,23 +100,13 @@ def parse_onenote_csv(file_path):
 
     if current:
         rows_out.append(current)
-
-    print("Initially processed rows: ")
-    print(rows_out)
-    print("------")
     
     # --- format indentation ---
     for r in rows_out:
         for t, c in r.items():
-            print(c)
             c = format_indented(c)
             r[t].clear()
             r[t].append(c)
-            print(c)
-
-    print("Indented rows: ")
-    print(rows_out)
-    print("------")
 
     return columns, rows_out
 
