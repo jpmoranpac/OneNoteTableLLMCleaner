@@ -25,9 +25,40 @@ Rules:
 - Do NOT summarise or expand
 - Preserve structure where possible
 """
+import time
+import re
+from openai import RateLimitError
+
+def with_backoff(func, *args, max_retries=5, **kwargs):
+    for attempt in range(max_retries):
+        try:
+            return func(*args, **kwargs)
+
+        except RateLimitError as e:
+            msg = str(e)
+
+            # Try to extract "try again in Xs"
+            match = re.search(r"try again in ([0-9.]+)s", msg)
+
+            if match:
+                wait_time = float(match.group(1))
+            else:
+                # fallback exponential backoff
+                wait_time = 2 ** attempt
+
+            print(f"Rate limited. Waiting {wait_time:.2f}s...")
+            time.sleep(wait_time)
+
+    raise RuntimeError("Max retries exceeded")
 
 def proofread_text(text):
-    response = client.chat.completions.create(
+#     response = with_backoff(
+#     client.chat.completions.create,
+#     model="llama-3.1-8b-instant",
+#     messages=[{"role": "user", "content": text}]
+# )
+
+    response = with_backoff(client.chat.completions.create,
         model="llama-3.1-8b-instant",
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},

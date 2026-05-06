@@ -74,7 +74,10 @@ def parse_onenote_csv(file_path):
     columns = detect_columns(header)
     print("Detected columns:", columns)
 
+    print("Reading in data", end="")
+
     for row in reader:
+        print(".", end="")
         row = [clean_cell(c) for c in row]
 
         if not any(row):
@@ -101,12 +104,18 @@ def parse_onenote_csv(file_path):
     if current:
         rows_out.append(current)
     
+    print("Completed reading. Read ", len(rows_out), " rows.")
+    print("Now formatting", end="")
+
     # --- format indentation ---
     for r in rows_out:
         for t, c in r.items():
             c = format_indented(c)
             r[t].clear()
             r[t].append(c)
+            print(".", end="")
+
+    print("Completed formatting!")
 
     return columns, rows_out
 
